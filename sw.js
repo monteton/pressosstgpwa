@@ -1,6 +1,7 @@
 // Service Worker: приложение открывается и без интернета.
 // Страницы и картинки берутся из сети, а при отсутствии связи — из кэша. Видео с BotHelp не кэшируются.
 const CACHE_NAME = 'osanka-press-pwa-v1';
+const KEEP = [CACHE_NAME];   // кэши, которые не удаляем при обновлении
 const PRECACHE = [
   "./",
   "./access-control.js",
@@ -73,7 +74,7 @@ self.addEventListener('install', (event) => {
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then(names => Promise.all(names.filter(n => n !== CACHE_NAME).map(n => caches.delete(n))))
+    caches.keys().then(names => Promise.all(names.filter(n => !KEEP.includes(n)).map(n => caches.delete(n))))
   );
   self.clients.claim();
 });
